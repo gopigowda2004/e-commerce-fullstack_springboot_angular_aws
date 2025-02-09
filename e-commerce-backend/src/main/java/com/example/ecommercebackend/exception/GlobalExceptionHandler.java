@@ -1,15 +1,21 @@
 package com.example.ecommercebackend.exception;
 
+import com.example.ecommercebackend.dto.APIExceptionResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<APIExceptionResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        return new ResponseEntity<>(new APIExceptionResponse(e.getMessage(), false), HttpStatus.BAD_REQUEST);
+    }
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<String> handleRuntimeException(RuntimeException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    public ResponseEntity<APIExceptionResponse> handleRuntimeException(RuntimeException e) {
+        return new ResponseEntity<>(new APIExceptionResponse(e.getMessage(), false), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

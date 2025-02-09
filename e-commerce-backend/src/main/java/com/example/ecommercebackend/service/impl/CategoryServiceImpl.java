@@ -1,13 +1,16 @@
 package com.example.ecommercebackend.service.impl;
 
 import com.example.ecommercebackend.dto.CategoryDTO;
+import com.example.ecommercebackend.dto.CategoryResponse;
 import com.example.ecommercebackend.model.Category;
 import com.example.ecommercebackend.repository.CategoryRepository;
 import com.example.ecommercebackend.service.CategoryService;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -21,12 +24,21 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<CategoryDTO> fetchCategories() {
-        return categoryRepository.findAll()
-                .stream()
-                .map(category -> modelMapper.map(category, CategoryDTO.class))
-                .toList();  // Java 16+ feature, more efficient than Collectors.toList()
+    public CategoryResponse fetchCategories(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
+        Page<Category> categoryPage = categoryRepository.findAll(pageable);
+        Page<CategoryDTO> categoryDTOPage = categoryPage.map(category -> modelMapper.map(category, CategoryDTO.class));
+        return new CategoryResponse(
+                categoryDTOPage.getContent(),
+                categoryDTOPage.getNumber(),
+                categoryDTOPage.getSize(),
+                categoryDTOPage.getTotalElements(),
+                categoryDTOPage.getTotalPages(),
+                categoryDTOPage.isLast()
+        );
     }
+
 
     @Override
     public CategoryDTO createCategory(CategoryDTO categoryDTO) {

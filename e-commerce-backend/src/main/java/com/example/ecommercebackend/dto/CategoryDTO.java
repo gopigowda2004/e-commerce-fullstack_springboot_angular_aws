@@ -1,7 +1,10 @@
 package com.example.ecommercebackend.dto;
 
+import jakarta.validation.constraints.NotEmpty;
+
 public class CategoryDTO {
     private Long categoryId;
+    @NotEmpty
     private String categoryName;
 
     public CategoryDTO() {
