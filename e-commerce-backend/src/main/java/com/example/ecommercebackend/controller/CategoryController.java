@@ -20,11 +20,6 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
-    /*@GetMapping
-    public ResponseEntity<List<CategoryDTO>> getCategories() {
-        return ResponseEntity.ok(categoryService.fetchCategories());
-    }*/
-
     @GetMapping
     public ResponseEntity<CategoryResponse> getCategoriesWthPagination(@RequestParam(value = "pageNumber", defaultValue = PAGE_NUMBER, required = false) Integer pageNumber, @RequestParam(value = "pageSize", defaultValue = PAGE_SIZE, required = false) Integer pageSize, @RequestParam(value = "sortBy", defaultValue = CATEGORY_SORT_BY, required = false) String sortBy, @RequestParam(value = "sortOrder", defaultValue = SORT_DIR, required = false) String sortOrder) {
         return new ResponseEntity<>(categoryService.fetchCategories(pageNumber, pageSize, sortBy, sortOrder), HttpStatus.OK);
