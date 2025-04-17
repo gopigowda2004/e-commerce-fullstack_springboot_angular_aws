@@ -5,12 +5,16 @@ import com.example.ecommercebackend.dto.CategoryResponse;
 import com.example.ecommercebackend.model.Category;
 import com.example.ecommercebackend.repository.CategoryRepository;
 import com.example.ecommercebackend.service.CategoryService;
+import lombok.val;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -18,6 +22,7 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final ModelMapper modelMapper;
 
+    @Autowired
     public CategoryServiceImpl(CategoryRepository categoryRepository, ModelMapper modelMapper) {
         this.categoryRepository = categoryRepository;
         this.modelMapper = modelMapper;
@@ -42,8 +47,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDTO createCategory(CategoryDTO categoryDTO) {
-        Category category = modelMapper.map(categoryDTO, Category.class);
-        Category savedCategory = categoryRepository.save(category);
+        Optional<Category> existing = categoryRepository.findByCategoryName(categoryDTO.getCategoryName());
+        if (existing.isPresent()) {
+            throw new IllegalArgumentException("Category with name '" + categoryDTO.getCategoryName() + "' already exists");
+        }
+        val category = modelMapper.map(categoryDTO, Category.class);
+        val savedCategory = categoryRepository.save(category);
         return modelMapper.map(savedCategory, CategoryDTO.class);
     }
 
