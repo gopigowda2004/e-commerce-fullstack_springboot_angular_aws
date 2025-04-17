@@ -10,16 +10,24 @@ import com.example.ecommercebackend.model.Product;
 import com.example.ecommercebackend.repository.CategoryRepository;
 import com.example.ecommercebackend.repository.ProductRepository;
 import com.example.ecommercebackend.service.CategoryService;
+import com.example.ecommercebackend.service.FileService;
 import com.example.ecommercebackend.service.ProductService;
 import lombok.val;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,15 +35,20 @@ import java.util.stream.Collectors;
 @Service
 public class ProductServiceImpl implements ProductService {
 
+    @Value("${product.image.upload.path}")
+    private String imageUploadPath;
+
     private ProductRepository productRepository;
     private CategoryRepository categoryRepository;
     private ModelMapper modelMapper;
+    private FileService fileService;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository, ModelMapper modelMapper) {
+    public ProductServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository, ModelMapper modelMapper, FileService fileService) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.modelMapper = modelMapper;
+        this.fileService = fileService;
     }
 
     @Override
@@ -133,9 +146,18 @@ public class ProductServiceImpl implements ProductService {
         val categoryOptional = categoryRepository.findById(categoryId);
         if (categoryOptional.isEmpty())
             throw new ResourceNotFoundException(String.format("Category does not exist!"));
-        val productsByCategoryId = productRepository.findByCategory_CategoryId(categoryId);
-        val productDTOList = productsByCategoryId.stream().map(product -> modelMapper.map(product, ProductDTO.class)).collect(Collectors.toList());
-        return new ProductResponse(productDTOList, null, null, null, null, null);
+
+        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
+        val productsByCategoryId = productRepository.findByCategory_CategoryId(categoryId, pageable);
+        val productDTOPageList = productsByCategoryId.map(product -> modelMapper.map(product, ProductDTO.class));
+        return new ProductResponse(
+                productDTOPageList.getContent(),
+                productDTOPageList.getNumber(),
+                productDTOPageList.getSize(),
+                productDTOPageList.getTotalElements(),
+                productDTOPageList.getTotalPages(),
+                productDTOPageList.isLast());
     }
 
     @Override
@@ -153,4 +175,56 @@ public class ProductServiceImpl implements ProductService {
                 productDTOList.isLast()
         );
     }
+
+    @Override
+    public ProductDTO updateProductImage(Long productId, MultipartFile productImage) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Product not found with id: ", productId)));
+
+        // 1. Get original file name
+        String originalFilename = productImage.getOriginalFilename();
+
+        // 2. Generate unique file name
+        String fileExtension = originalFilename.substring(originalFilename.lastIndexOf('.'));
+        String fileName = "product_" + product.getProductName() + "_" + System.currentTimeMillis() + fileExtension;
+
+        // 3. Create full path
+        Path uploadPath = Paths.get(imageUploadPath);
+        Path filePath = uploadPath.resolve(fileName);
+
+        try {
+            // 4. Ensure upload dir exists
+            Files.createDirectories(uploadPath);
+
+            // 5. Save the file
+            Files.copy(productImage.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            // 6. Update product entity
+            product.setProductImage(fileName);
+
+            Product updatedProduct = productRepository.save(product);
+            return modelMapper.map(updatedProduct, ProductDTO.class);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error uploading product image", e);
+        }
+    }
+
+    /*@Override
+    public ProductDTO updateProductImage(Long productId, MultipartFile productImage) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "id", productId));
+
+        try {
+            String fileName = fileService.uploadFile(productImage, imageUploadPath);
+            product.setProductImage(fileName);
+            Product updatedProduct = productRepository.save(product);
+
+            return modelMapper.map(updatedProduct, ProductDTO.class);
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to upload image", e);
+        }
+    }*/
+
 }

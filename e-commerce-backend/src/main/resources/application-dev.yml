@@ -22,3 +22,8 @@ logging:
 server:
   servlet:
     context-path: /api
+
+product:
+  image:
+    upload:
+      path: "src/main/resources/uploads/products/images/"
