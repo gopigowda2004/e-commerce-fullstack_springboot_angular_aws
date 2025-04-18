@@ -18,7 +18,7 @@ public class LocalFileServiceImpl implements FileService {
     public String uploadFile(MultipartFile file, String path) throws IOException {
         String originalFilename = file.getOriginalFilename();
         String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
-        String fileName = UUID.randomUUID().toString() + extension;
+        String fileName = UUID.randomUUID() + extension;
 
         Path uploadPath = Paths.get(path);
         if (!Files.exists(uploadPath)) {

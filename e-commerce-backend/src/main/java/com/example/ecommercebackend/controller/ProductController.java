@@ -1,7 +1,5 @@
 package com.example.ecommercebackend.controller;
 
-import com.example.ecommercebackend.dto.CategoryDTO;
-import com.example.ecommercebackend.dto.CategoryResponse;
 import com.example.ecommercebackend.dto.ProductDTO;
 import com.example.ecommercebackend.dto.ProductResponse;
 import com.example.ecommercebackend.service.ProductService;
@@ -14,13 +12,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import static com.example.ecommercebackend.config.AppConstants.*;
-import static com.example.ecommercebackend.config.AppConstants.SORT_DIR;
 
 @RestController
 @RequestMapping("products")
 public class ProductController {
 
-    private ProductService productService;
+    private final ProductService productService;
 
     @Autowired
     public ProductController(ProductService productService) {

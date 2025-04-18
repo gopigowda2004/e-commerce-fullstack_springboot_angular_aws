@@ -1,6 +1,5 @@
 package com.example.ecommercebackend.service;
 
-import com.example.ecommercebackend.dto.CategoryDTO;
 import com.example.ecommercebackend.dto.ProductDTO;
 import com.example.ecommercebackend.dto.ProductResponse;
 import jakarta.validation.Valid;

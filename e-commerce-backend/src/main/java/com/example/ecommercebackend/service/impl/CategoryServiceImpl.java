@@ -5,7 +5,6 @@ import com.example.ecommercebackend.dto.CategoryResponse;
 import com.example.ecommercebackend.model.Category;
 import com.example.ecommercebackend.repository.CategoryRepository;
 import com.example.ecommercebackend.service.CategoryService;
-import lombok.val;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -51,8 +50,8 @@ public class CategoryServiceImpl implements CategoryService {
         if (existing.isPresent()) {
             throw new IllegalArgumentException("Category with name '" + categoryDTO.getCategoryName() + "' already exists");
         }
-        val category = modelMapper.map(categoryDTO, Category.class);
-        val savedCategory = categoryRepository.save(category);
+        Category category = modelMapper.map(categoryDTO, Category.class);
+        Category savedCategory = categoryRepository.save(category);
         return modelMapper.map(savedCategory, CategoryDTO.class);
     }
 

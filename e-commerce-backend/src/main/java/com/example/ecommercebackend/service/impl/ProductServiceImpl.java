@@ -1,7 +1,5 @@
 package com.example.ecommercebackend.service.impl;
 
-import com.example.ecommercebackend.dto.CategoryDTO;
-import com.example.ecommercebackend.dto.CategoryResponse;
 import com.example.ecommercebackend.dto.ProductDTO;
 import com.example.ecommercebackend.dto.ProductResponse;
 import com.example.ecommercebackend.exception.custom.ResourceNotFoundException;
@@ -9,7 +7,6 @@ import com.example.ecommercebackend.model.Category;
 import com.example.ecommercebackend.model.Product;
 import com.example.ecommercebackend.repository.CategoryRepository;
 import com.example.ecommercebackend.repository.ProductRepository;
-import com.example.ecommercebackend.service.CategoryService;
 import com.example.ecommercebackend.service.FileService;
 import com.example.ecommercebackend.service.ProductService;
 import lombok.val;
@@ -23,25 +20,21 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
 
+    private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
+    private final ModelMapper modelMapper;
+    private final FileService fileService;
     @Value("${product.image.upload.path}")
     private String imageUploadPath;
-
-    private ProductRepository productRepository;
-    private CategoryRepository categoryRepository;
-    private ModelMapper modelMapper;
-    private FileService fileService;
 
     @Autowired
     public ProductServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository, ModelMapper modelMapper, FileService fileService) {
@@ -74,14 +67,14 @@ public class ProductServiceImpl implements ProductService {
         if (existing.isPresent()) {
             throw new IllegalArgumentException("Product with name '" + productDTO.getProductName() + "' already exists");
         }
-        val product = modelMapper.map(productDTO, Product.class);
+        Product product = modelMapper.map(productDTO, Product.class);
         product.setProductImage("default.png");
         product.setCategory(category);
-        val specialPrice = product.getPrice() - (
+        Double specialPrice = product.getPrice() - (
                 (product.getDiscount() * 0.01) * product.getPrice()
         );
         product.setSpecialPrice(specialPrice);
-        val savedProduct = productRepository.save(product);
+        Product savedProduct = productRepository.save(product);
         return modelMapper.map(savedProduct, ProductDTO.class);
     }
 
@@ -143,14 +136,14 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductResponse fetchProductsByCategory(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder, Long categoryId) {
-        val categoryOptional = categoryRepository.findById(categoryId);
+        Optional<Category> categoryOptional = categoryRepository.findById(categoryId);
         if (categoryOptional.isEmpty())
-            throw new ResourceNotFoundException(String.format("Category does not exist!"));
+            throw new ResourceNotFoundException("Category does not exist!");
 
         Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
-        val productsByCategoryId = productRepository.findByCategory_CategoryId(categoryId, pageable);
-        val productDTOPageList = productsByCategoryId.map(product -> modelMapper.map(product, ProductDTO.class));
+        Page<Product> productsByCategoryId = productRepository.findByCategory_CategoryId(categoryId, pageable);
+        Page<ProductDTO> productDTOPageList = productsByCategoryId.map(product -> modelMapper.map(product, ProductDTO.class));
         return new ProductResponse(
                 productDTOPageList.getContent(),
                 productDTOPageList.getNumber(),
@@ -164,8 +157,8 @@ public class ProductServiceImpl implements ProductService {
     public ProductResponse searchProduct(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder, String keyword) {
         Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
-        val searchedProducts = productRepository.findByProductNameContainingIgnoreCase(keyword, pageable);
-        val productDTOList = searchedProducts.map(products -> modelMapper.map(products, ProductDTO.class));
+        Page<Product> searchedProducts = productRepository.findByProductNameContainingIgnoreCase(keyword, pageable);
+        Page<ProductDTO> productDTOList = searchedProducts.map(products -> modelMapper.map(products, ProductDTO.class));
         return new ProductResponse(
                 productDTOList.getContent(),
                 productDTOList.getNumber(),
