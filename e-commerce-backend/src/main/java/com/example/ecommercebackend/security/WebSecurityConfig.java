@@ -63,15 +63,15 @@ public class WebSecurityConfig {
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
-                        auth
-                                .requestMatchers("/h2-console/**").permitAll()
+                                auth
+                                        .requestMatchers("/h2-console/**").permitAll()
 //                                .requestMatchers("/api/h2-console/**").permitAll()
 //                                .requestMatchers("/api/auth/**").permitAll()
-                                .requestMatchers("/auth/**").permitAll()
-                                .requestMatchers("/v3/api-docs/**").permitAll()
-                                .requestMatchers("/swagger-ui/**").permitAll()
-                                .requestMatchers("/images/**").permitAll()
-                                .anyRequest().authenticated()
+                                        .requestMatchers("/auth/**").permitAll()
+                                        .requestMatchers("/v3/api-docs/**").permitAll()
+                                        .requestMatchers("/swagger-ui/**").permitAll()
+                                        .requestMatchers("/images/**").permitAll()
+                                        .anyRequest().authenticated()
                 );
         http.headers(headers ->
                 headers.

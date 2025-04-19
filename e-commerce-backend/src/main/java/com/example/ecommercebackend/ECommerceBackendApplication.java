@@ -1,21 +1,26 @@
 package com.example.ecommercebackend;
 
-import com.example.ecommercebackend.model.AppRole;
-import com.example.ecommercebackend.model.Role;
-import com.example.ecommercebackend.model.User;
+import com.example.ecommercebackend.config.AppConstants;
+import com.example.ecommercebackend.model.*;
+import com.example.ecommercebackend.repository.CategoryRepository;
+import com.example.ecommercebackend.repository.ProductRepository;
 import com.example.ecommercebackend.repository.RoleRepository;
 import com.example.ecommercebackend.repository.UserRepository;
-import io.jsonwebtoken.security.Keys;
+import com.example.ecommercebackend.service.CartService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import javax.crypto.SecretKey;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
-import java.util.Base64;
-import java.security.SecureRandom;
 
 @SpringBootApplication
 public class ECommerceBackendApplication {
@@ -36,7 +41,14 @@ public class ECommerceBackendApplication {
     }
 
     @Bean
-    public CommandLineRunner initData(RoleRepository roleRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public CommandLineRunner initData(
+            RoleRepository roleRepository,
+            UserRepository userRepository,
+            PasswordEncoder passwordEncoder,
+            CartService cartService,
+            ProductRepository productRepository,
+            CategoryRepository categoryRepository
+    ) {
         return args -> {
             // Retrieve or create roles
             Role userRole = roleRepository.findByRoleName(AppRole.ROLE_USER)
@@ -93,6 +105,58 @@ public class ECommerceBackendApplication {
                 admin.setRoles(adminRoles);
                 userRepository.save(admin);
             });
+
+            //
+            SecurityContext context = SecurityContextHolder.createEmptyContext();
+            Authentication auth = new UsernamePasswordAuthenticationToken("user1", "password1", List.of(new SimpleGrantedAuthority(AppConstants.ADMIN)));
+            context.setAuthentication(auth);
+            SecurityContextHolder.setContext(context);
+
+            // Create categories
+            Category electronics = new Category();
+            electronics.setCategoryName("Electronics");
+
+            Category fashion = new Category();
+            fashion.setCategoryName("Fashion");
+
+            // Persist categories (make sure you have CategoryRepository injected)
+            electronics = categoryRepository.save(electronics);
+            fashion = categoryRepository.save(fashion);
+
+            // Create products
+            Product mobile = new Product();
+            mobile.setProductName("Smartphone");
+            mobile.setProductImage("mobile.jpg");
+            mobile.setCategory(electronics);
+            mobile.setPrice(15000.0);
+            mobile.setQuantity(10);
+
+            Product tshirt = new Product();
+            tshirt.setProductName("T-Shirt");
+            tshirt.setProductImage("tshirt.jpg");
+            tshirt.setCategory(fashion);
+            tshirt.setPrice(500.0);
+            tshirt.setQuantity(50);
+
+            double mobilePriceToUse = Optional.ofNullable(mobile.getSpecialPrice())
+                    .orElse(mobile.getPrice()) // or 0.0
+                    .doubleValue();
+
+            double tshirtPriceToUse = Optional.ofNullable(tshirt.getSpecialPrice())
+                    .orElse(tshirt.getPrice()) // or 0.0
+                    .doubleValue();
+
+            mobile.setSpecialPrice(mobilePriceToUse);
+            tshirt.setSpecialPrice(tshirtPriceToUse);
+
+
+            // Persist products (make sure you have ProductRepository injected)
+            mobile = productRepository.save(mobile);
+            tshirt = productRepository.save(tshirt);
+
+            // Add products to cart with quantities
+            cartService.addProductToCart(mobile.getProductId(), 2);
+            cartService.addProductToCart(tshirt.getProductId(), 3);
         };
     }
 

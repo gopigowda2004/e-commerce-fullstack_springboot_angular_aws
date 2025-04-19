@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -32,5 +35,12 @@ public class Product {
             name = "seller_id"
     )
     private User user;
+
+    @OneToMany(
+            mappedBy = "product",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            fetch = FetchType.EAGER
+    )
+    private List<CartItem> cartItems = new ArrayList<>();
 
 }

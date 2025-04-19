@@ -27,7 +27,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.example.ecommercebackend.config.AppConstants.*;
+import static com.example.ecommercebackend.config.AppConstants.ADMIN;
+import static com.example.ecommercebackend.config.AppConstants.SELLER;
 
 @RestController
 @RequestMapping("/auth")

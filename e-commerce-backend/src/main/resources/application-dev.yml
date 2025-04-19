@@ -20,7 +20,7 @@ spring:
 
 logging:
   level:
-    root: info
+    root: debug
 
 server:
   servlet:

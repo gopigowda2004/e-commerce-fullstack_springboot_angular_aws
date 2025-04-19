@@ -1,12 +1,16 @@
 package com.example.ecommercebackend.service.impl;
 
+import com.example.ecommercebackend.dto.CartDTO;
 import com.example.ecommercebackend.dto.ProductDTO;
 import com.example.ecommercebackend.dto.ProductResponse;
 import com.example.ecommercebackend.exception.custom.ResourceNotFoundException;
+import com.example.ecommercebackend.model.Cart;
 import com.example.ecommercebackend.model.Category;
 import com.example.ecommercebackend.model.Product;
+import com.example.ecommercebackend.repository.CartRepository;
 import com.example.ecommercebackend.repository.CategoryRepository;
 import com.example.ecommercebackend.repository.ProductRepository;
+import com.example.ecommercebackend.service.CartService;
 import com.example.ecommercebackend.service.FileService;
 import com.example.ecommercebackend.service.ProductService;
 import lombok.val;
@@ -24,7 +28,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -33,15 +39,19 @@ public class ProductServiceImpl implements ProductService {
     private final CategoryRepository categoryRepository;
     private final ModelMapper modelMapper;
     private final FileService fileService;
+    private final CartRepository cartRepository;
+    private final CartService cartService;
     @Value("${product.image.upload.path}")
     private String imageUploadPath;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository, ModelMapper modelMapper, FileService fileService) {
+    public ProductServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository, ModelMapper modelMapper, FileService fileService, CartRepository cartRepository, CartService cartService) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.modelMapper = modelMapper;
         this.fileService = fileService;
+        this.cartRepository = cartRepository;
+        this.cartService = cartService;
     }
 
     @Override
@@ -122,17 +132,38 @@ public class ProductServiceImpl implements ProductService {
         }
 
         var saved = productRepository.save(product);
+
+        List<Cart> carts = cartRepository.findCartsByProductId(id);
+
+        List<CartDTO> cartDTOs = carts.stream().map(cart -> {
+            CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
+
+            List<ProductDTO> products = cart.getCartItems().stream()
+                    .map(p -> modelMapper.map(p.getProduct(), ProductDTO.class)).collect(Collectors.toList());
+
+            cartDTO.setProducts(products);
+
+            return cartDTO;
+
+        }).toList();
+
+        cartDTOs.forEach(cart -> cartService.updateProductInCarts(cart.getCartId(), id));
+
         return modelMapper.map(saved, ProductDTO.class);
     }
 
 
     @Override
-    public void deleteProduct(Long id) {
-        if (!productRepository.existsById(id)) {
-            throw new RuntimeException("Product not found with id: " + id);
+    public void deleteProduct(Long productId) {
+        if (!productRepository.existsById(productId)) {
+            throw new RuntimeException("Product not found with id: " + productId);
         }
-        productRepository.deleteById(id);
+        // DELETE
+        List<Cart> carts = cartRepository.findCartsByProductId(productId);
+        carts.forEach(cart -> cartService.deleteProductFromCart(cart.getCartId(), productId));
+        productRepository.deleteById(productId);
     }
+
 
     @Override
     public ProductResponse fetchProductsByCategory(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder, Long categoryId) {
