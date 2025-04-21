@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import static com.example.ecommercebackend.config.AppConstants.*;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping("products")
 public class ProductController {

@@ -1,5 +1,6 @@
 package com.example.ecommercebackend.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -59,13 +60,10 @@ public class User {
     @OneToMany(
             mappedBy = "user",
             cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            fetch = FetchType.LAZY,
             orphanRemoval = true
     )
-/*    @JoinTable(
-            name = "user_address",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "address_id")
-    )*/
+    @JsonManagedReference
     private List<Address> addresses = new ArrayList<>();
 
     @ToString.Exclude

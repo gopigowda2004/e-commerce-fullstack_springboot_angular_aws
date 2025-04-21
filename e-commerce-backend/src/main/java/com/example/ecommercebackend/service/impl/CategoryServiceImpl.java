@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -72,5 +73,11 @@ public class CategoryServiceImpl implements CategoryService {
             throw new RuntimeException("Category not found with id: " + id);
         }
         categoryRepository.deleteById(id);
+    }
+
+    @Override
+    public List<CategoryDTO> fetchAllCategory() {
+        List<Category> categoryList = categoryRepository.findAll();
+        return categoryList.stream().map(category -> modelMapper.map(category, CategoryDTO.class)).toList();
     }
 }

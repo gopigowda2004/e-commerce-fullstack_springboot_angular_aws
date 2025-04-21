@@ -8,6 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
@@ -26,5 +29,11 @@ public class OrderController {
                 orderRequestDTO.getPgResponseMessage()
         );
         return new ResponseEntity<>(order, HttpStatus.CREATED);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<OrderDTO>> fetchAllOrders() {
+        List<OrderDTO> orders = orderService.fetchAllOrders();
+        return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 }

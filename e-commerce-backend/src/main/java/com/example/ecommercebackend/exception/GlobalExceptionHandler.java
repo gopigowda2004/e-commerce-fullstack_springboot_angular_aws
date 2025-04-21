@@ -15,6 +15,18 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler
+    public ResponseEntity<APIExceptionResponse> handleAPIException(APIException e) {
+        String message = e.getMessage();
+        APIExceptionResponse apiExceptionResponse = new APIExceptionResponse(message, false);
+        if (message.contains("already exist"))
+            return new ResponseEntity<>(apiExceptionResponse, HttpStatus.CONFLICT);
+        if (message.contains("authentication is required"))
+            return new ResponseEntity<>(apiExceptionResponse, HttpStatus.UNAUTHORIZED);
+
+        return new ResponseEntity<>(apiExceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> myMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         Map<String, String> response = new HashMap<>();

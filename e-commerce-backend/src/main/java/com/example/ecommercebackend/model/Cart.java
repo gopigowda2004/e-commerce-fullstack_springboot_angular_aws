@@ -1,5 +1,6 @@
 package com.example.ecommercebackend.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,6 +29,7 @@ public class Cart {
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
             orphanRemoval = true
     )
+    @JsonManagedReference
     private List<CartItem> cartItems = new ArrayList<>();
 
     private Double totalPrice = 0.0;

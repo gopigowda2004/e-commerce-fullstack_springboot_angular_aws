@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import static com.example.ecommercebackend.config.AppConstants.*;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/addresses")
 public class AddressController {
@@ -37,7 +38,7 @@ public class AddressController {
 
     @GetMapping("/{addressId}")
     public ResponseEntity<AddressDTO> fetchAddressById(@PathVariable Long addressId) {
-        return new ResponseEntity<>(addressService.fetchAddressById(addressId), HttpStatus.FOUND);
+        return new ResponseEntity<>(addressService.fetchAddressById(addressId), HttpStatus.OK);
     }
 
     @GetMapping

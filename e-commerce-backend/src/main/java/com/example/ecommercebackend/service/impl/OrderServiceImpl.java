@@ -18,6 +18,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -120,5 +122,12 @@ public class OrderServiceImpl implements OrderService {
         orderDTO.setAddressId(addressId);
 
         return orderDTO;
+    }
+
+    @Override
+    public List<OrderDTO> fetchAllOrders() {
+        String loggedInEmail = authUtil.loggedInEmail();
+        List<Order> orders = orderRepository.findByEmail(loggedInEmail);
+        return orders.stream().map(order -> modelMapper.map(order, OrderDTO.class)).toList();
     }
 }

@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 import static com.example.ecommercebackend.config.AppConstants.ADMIN;
 import static com.example.ecommercebackend.config.AppConstants.SELLER;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/auth")
 public class AuthController {

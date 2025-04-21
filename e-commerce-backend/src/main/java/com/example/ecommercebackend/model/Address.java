@@ -1,11 +1,14 @@
 package com.example.ecommercebackend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -35,6 +38,8 @@ public class Address {
     @NotBlank
     private String pincode;
 
+    @ToString.Exclude
+    @JsonBackReference
     @ManyToOne()
     @JoinColumn(name = "user_id")
     private User user;
