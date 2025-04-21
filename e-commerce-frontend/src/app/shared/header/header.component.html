@@ -1,0 +1,77 @@
+<nav class="navbar navbar-dark bg-dark px-4 py-2">
+  <div class="container-fluid d-flex align-items-center justify-content-between">
+
+    <!-- 🛍️ Logo / Brand Name -->
+    <a class="navbar-brand d-flex align-items-center gap-2" routerLink="/">
+      <img src="https://cdn-icons-png.freepik.com/512/869/869636.png" alt="logo" width="30" height="30" />
+      <span>e-comm</span>
+    </a>
+
+    <!-- 🔍 Search Bar -->
+    <!-- <form class="d-flex align-items-center w-50 mx-3 d-none d-md-flex" role="search">
+      <input type="search" class="form-control me-2" placeholder="Search products..." aria-label="Search" />
+      <button class="btn btn-outline-light" type="submit">Search</button>
+    </form> -->
+    <form class="d-flex align-items-center w-50 mx-3 d-none d-md-flex" (submit)="onSearch($event)">
+      <input
+        type="search"
+        class="form-control me-2"
+        [(ngModel)]="searchQuery"
+        name="search"
+        placeholder="Search products..."
+        aria-label="Search" />
+      <button class="btn btn-outline-light" type="submit">Search</button>
+    </form>
+    
+
+    <!-- 🛒 Cart Icon with padded badge -->
+    <div *ngIf="username()" class="me-3">
+      <a routerLink="/cart" class="position-relative text-white d-flex align-items-center">
+        <i class="bi bi-cart4 fs-4"></i>
+        <span *ngIf="cartCount() > 0"
+          class="position-absolute translate-middle badge rounded-pill bg-danger text-white fw-semibold"
+          style="top: 10px; left: 22px; font-size: 0.75rem; min-width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;">
+          {{ cartCount() }}
+        </span>
+      </a>
+    </div>
+
+    <div class="me-3">
+      <a
+        routerLink="/my-orders"
+        class="btn btn-outline-light d-flex align-items-center gap-2 px-3 py-1 rounded-pill shadow-sm"
+        style="font-weight: 500;">
+        <i class="bi bi-bag-check-fill fs-5 text-warning"></i>
+        <span>My Orders</span>
+        <span class="badge bg-light text-dark ms-2">{{ orderCountValue }}</span>
+      </a>
+    </div>
+    
+
+    <!-- 👤 User Profile Dropdown -->
+    <div *ngIf="username(); else guestLinks" class="dropdown">
+      <!-- <a href="/profile" class="d-block text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
+        <img src="https://png.pngtree.com/png-vector/20241118/ourlarge/pngtree-user-icon-symbol-design-creative-and-versatile-isolated-graphics-png-image_14449379.png" alt="User" width="32" height="32" class="rounded-circle">
+        <i class="bi bi-person-circle fs-2"></i>
+        &nbsp;
+        <span class="ms-2">{{ username() | uppercase }}</span>
+      </a> -->
+      <a href="/profile" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
+        <i class="bi bi-person-circle fs-3"></i>
+        <span class="ms-2">{{ username() | uppercase }}</span>
+      </a>      
+      <ul class="dropdown-menu dropdown-menu-end text-small shadow">
+        <li><a class="dropdown-item" (click)="viewProfile()">Profile</a></li>
+        <li>
+          <hr class="dropdown-divider">
+        </li>
+        <li><a class="dropdown-item text-danger" (click)="logout()">Sign out</a></li>
+      </ul>
+    </div>
+
+    <!-- 🔘 Guest Login -->
+    <ng-template #guestLinks>
+      <a class="btn btn-outline-light" routerLink="/login">Login</a>
+    </ng-template>
+  </div>
+</nav>
