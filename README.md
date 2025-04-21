@@ -1,12 +1,12 @@
-### **e-commerce-fullstack_springboot_react_aws**  
-🚀 Full-stack e-commerce application built with Spring Boot, React, Spring Security 6, JWT, and AWS deployment.  
+### **e-commerce-fullstack_springboot_angular_aws**  
+🚀 Full-stack e-commerce application built with Spring Boot, Angular, Spring Security 6, JWT, and AWS deployment.  
 
 ---
 
 ## 📌 **Project Overview**  
 This is a full-stack e-commerce application with the following features:  
 - 🛂 **Backend:** Spring Boot, Spring Data JPA, Spring Security 6, JWT authentication, REST APIs  
-- 🎨 **Frontend:** React, Redux, Material UI (or any preferred UI library)  
+- 🎨 **Frontend:** Angular, Bootstrap 5  
 - ☁ **Deployment:** AWS (S3, EC2, RDS, CloudFront)  
 - 🟢 **Database:** PostgreSQL / MySQL  
 - 🔒 **Security:** JWT authentication, role-based access control  
@@ -16,7 +16,7 @@ This is a full-stack e-commerce application with the following features:
 
 ## 🏠 **Project Structure**  
 ```
-e-commerce-fullstack_springboot_react_aws/
+e-commerce-fullstack_springboot_angular_aws/
 │── backend/                  # Spring Boot application (REST APIs, Security, DB)
 │   ├── src/main/java/...      # Java source code
 │   ├── src/main/resources/    # Configuration files
@@ -37,8 +37,8 @@ e-commerce-fullstack_springboot_react_aws/
 
 ### **1️⃣ Clone the Repository**  
 ```sh
-git clone https://github.com/dinesh-more/e-commerce-fullstack_springboot_react_aws.git
-cd e-commerce-fullstack_springboot_react_aws
+git clone https://github.com/dinesh-more/e-commerce-fullstack_springboot_angular_aws.git
+cd e-commerce-fullstack_springboot_angular_aws
 ```
 
 ### **2️⃣ Backend Setup**  
@@ -63,7 +63,7 @@ cd e-commerce-fullstack_springboot_react_aws
   ```
 - **Start Development Server:**  
   ```sh
-  npm start
+  ng serve
   ```
 
 ---
@@ -96,10 +96,8 @@ cd e-commerce-fullstack_springboot_react_aws
 - Maven  
 
 ### **Frontend:**  
-- React.js  
-- Redux Toolkit  
-- Material UI / TailwindCSS  
-- Axios  
+- Angular    
+- Bootstrap 5
 
 ### **Cloud & DevOps:**  
 - AWS S3, EC2, RDS, CloudFront  
