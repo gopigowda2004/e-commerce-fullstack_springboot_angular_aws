@@ -11,6 +11,9 @@ import { MyOrdersComponent } from './orders/my-orders/my-orders.component';
 import { roleGuard } from './shared/role.guard';
 import { ProfileComponent } from './users/profile/profile.component';
 import { ProductManageComponent } from './products/product-manage/product-manage.component';
+import { WishlistComponent } from './wishlist/wishlist.component';
+import { PaymentComponent } from './payment/payment.component';
+import { OrderPlaceSuccessComponent } from './orders/order-place-success/order-place-success.component';
 
 export const  routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -23,6 +26,8 @@ export const  routes: Routes = [
     { path: 'my-orders', component: MyOrdersComponent },
     { path: 'products/create', component: ProductCreateComponent, canActivate: [roleGuard] },
     { path: 'profile', component: ProfileComponent },
-    { path: 'products/manage', component: ProductManageComponent, canActivate: [AuthGuard]}
-  
+    { path: 'products/manage', component: ProductManageComponent, canActivate: [AuthGuard]},
+    { path: 'wishlist', component: WishlistComponent},
+    { path: 'payment', component: PaymentComponent },
+    { path: 'order-place-success', component: OrderPlaceSuccessComponent } 
   ];

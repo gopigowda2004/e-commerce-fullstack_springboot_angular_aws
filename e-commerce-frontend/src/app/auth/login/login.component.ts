@@ -37,6 +37,7 @@ export class LoginComponent {
         localStorage.setItem('token', res.jwtToken);
         localStorage.setItem('username', res.username);
         localStorage.setItem('roles', JSON.stringify(res.roles));
+        localStorage.setItem('userId', JSON.stringify(res.id));
         this.router.navigate(['/products']);
         window.location.reload();
       },

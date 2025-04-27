@@ -32,6 +32,15 @@ export class OrderSummaryComponent implements OnInit {
   pgStatus = '';
   pgResponseMessage = '';
 
+  showAddAddressForm = false;
+  newAddress: any = {
+    buildingName: '',
+    street: '',
+    city: '',
+    state: '',
+    country: '',
+    pincode: ''
+  };
 
   constructor() {}
 
@@ -51,35 +60,68 @@ export class OrderSummaryComponent implements OnInit {
     });
   }
   
-
   placeOrder() {
-    if (!this.selectedAddressId) {
-      return alert('Please select an address.');
-    }
-  
-    let orderData: any = {
-      addressId: this.selectedAddressId,
-      paymentMethod: this.paymentMethod
-    };
-  
     if (this.paymentMethod === 'online') {
-      orderData.pgName = this.pgName;
-      orderData.pgPaymentId = this.pgPaymentId;
-      orderData.pgStatus = this.pgStatus;
-      orderData.pgResponseMessage = this.pgResponseMessage;
+      // Redirect to payment page instead of placing order directly
+      this.router.navigate(['/payment'], {
+        state: {
+          paymentMethod: this.pgName,
+          totalAmount: this.cart.totalPrice,
+          orderData: {
+            addressId: this.selectedAddressId,
+            paymentMethod: this.paymentMethod,
+            pgName: this.pgName,
+            pgPaymentId: this.pgPaymentId,
+          }
+        }
+      });
+    } else {
+      // For COD or Wallet, directly place order
+      const orderData = {
+        addressId: this.selectedAddressId,
+        paymentMethod: this.paymentMethod
+      };
+      this.orderService.placeOrder(this.paymentMethod, orderData).subscribe({
+        next: (res) => {
+          alert('Order placed successfully!');
+          this.router.navigate(['/my-orders']);
+        },
+        error: (err) => {
+          alert('Failed to place order: ' + (err.error?.message || 'Unknown error'));
+        }
+      });
     }
-  
-    this.orderService.placeOrder(this.paymentMethod, orderData).subscribe({
-      next: () => {
-        alert('✅ Order placed successfully!');
-        this.router.navigate(['/']);
-      },
-      error: (err) => {
-        console.error('❌ Order failed:', err);
-        alert(err.error?.message || 'Order placement failed.');
-      }
-    });
   }
+  
+
+  // placeOrder() {
+  //   if (!this.selectedAddressId) {
+  //     return alert('Please select an address.');
+  //   }
+  
+  //   let orderData: any = {
+  //     addressId: this.selectedAddressId,
+  //     paymentMethod: this.paymentMethod
+  //   };
+  
+  //   if (this.paymentMethod === 'online') {
+  //     orderData.pgName = this.pgName;
+  //     orderData.pgPaymentId = this.pgPaymentId;
+  //     orderData.pgStatus = this.pgStatus;
+  //     orderData.pgResponseMessage = this.pgResponseMessage;
+  //   }
+  
+  //   this.orderService.placeOrder(this.paymentMethod, orderData).subscribe({
+  //     next: () => {
+  //       alert('✅ Order placed successfully!');
+  //       this.router.navigate(['/']);
+  //     },
+  //     error: (err) => {
+  //       console.error('❌ Order failed:', err);
+  //       alert(err.error?.message || 'Order placement failed.');
+  //     }
+  //   });
+  // }
   
 
   loadAddresses(page = 0) {
@@ -98,6 +140,20 @@ export class OrderSummaryComponent implements OnInit {
       }
     });
   }
+
+  saveAddress() {
+    this.orderService.saveAddress(this.newAddress).subscribe({
+      next: (res) => {
+        alert('Address added successfully!');
+        this.showAddAddressForm = false;
+        this.loadAddresses(); // reload addresses
+      },
+      error: (err) => {
+        alert('Failed to save address: ' + (err.error?.message || 'Unknown error.'));
+      }
+    });
+  }
+
   
   
 }

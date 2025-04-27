@@ -5,6 +5,8 @@ import { CartService } from '../../services/cart.service';
 import { HttpClientModule } from '@angular/common/http';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { WishlistComponent } from '../../wishlist/wishlist.component';
+import { WishlistService } from '../../services/wishlist.service';
 
 @Component({
   selector: 'app-product-list',
@@ -17,6 +19,7 @@ export class ProductListComponent {
   private productService = inject(ProductService);
   private cartService = inject(CartService);
   private route = inject(ActivatedRoute);
+  private wishlistService = inject(WishlistService);
 
   products: any[] = [];
   loading = true;
@@ -176,12 +179,48 @@ export class ProductListComponent {
 
   addToWishlist(productId: number) {
     console.log('Add to wishlist:', productId);
-    // Add your wishlist logic here
+    const userId = Number(localStorage.getItem('userId'));
+    if (!userId) {
+      alert('User ID is invalid or not found.');
+      return;
+    }
+    this.wishlistService.addProductToWishlist(userId, productId).subscribe({
+      next: (res) => {
+        console.log('Product added to wishlist:', res);
+        alert('Product added to wishlist!');
+      },
+      error: (err) => {
+        console.error('Error adding to wishlist:', err);
+        const backendMessage = err.error?.message || 'Something went wrong.';
+        alert('Failed to add to wishlist: ' + backendMessage); 
+      }
+    });
   }
   
   buyNow(productId: number) {
     console.log('Buy now clicked for:', productId);
-    // Add your buy now logic here, maybe redirect to checkout
+    this.cartService.addToCart(productId, 1).subscribe({
+      next: (res) => {
+        if (res) {
+          this.cartService.getCart().subscribe({
+            next: (cart) => {
+              alert('Product added to cart! Redirecting to checkout...');
+              this.cartService.notifyCartChange(); // Notify other component
+              // Redirect to checkout page
+              // this.router.navigate(['/checkout']);
+              window.location.href = '/cart';
+            },
+            error: (err) => {
+              alert('Failed to fetch cart.');
+            } 
+          });
+        }
+      },
+      error: (err) => {
+        const backendMessage = err.error?.message || 'Something went wrong.';
+        alert('Failed to add to cart: ' + backendMessage);
+      }
+    });
   }
   
 

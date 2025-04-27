@@ -45,5 +45,8 @@ export class OrderService {
     return this.http.get<any[]>('http://localhost:8080/api/orders');
   }
   
+  saveAddress(address: any) {
+    return this.http.post(`http://localhost:8080/api/addresses`, address);
+  }  
   
 }
