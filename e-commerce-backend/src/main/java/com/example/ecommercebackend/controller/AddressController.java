@@ -33,7 +33,7 @@ public class AddressController {
     @DeleteMapping("/{addressId}")
     public ResponseEntity<Void> deleteAddressById(@PathVariable Long addressId) {
         addressService.deleteAddressById(addressId);
-        return new ResponseEntity<>(HttpStatus.GONE);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/{addressId}")

@@ -105,28 +105,6 @@ export class ProductListComponent {
       });
     }
   }
-  
-  
-
-  // fetchProducts(): void {
-  //   this.loading = true;
-  //   this.productService.getAll({
-  //     pageNumber: this.page,
-  //     pageSize: this.size,
-  //     sortBy: 'productName',
-  //     sortOrder: 'asc'
-  //   }).subscribe({
-  //     next: (response: any) => {
-  //       this.products = response.content || response;
-  //       this.totalPages = response.totalPages || 1;
-  //       this.loading = false;
-  //     },
-  //     error: (err) => {
-  //       this.error = 'Failed to load products';
-  //       this.loading = false;
-  //     }
-  //   });
-  // }  
 
   nextPage(): void {
     this.page++;
@@ -153,8 +131,6 @@ export class ProductListComponent {
     this.fetchProducts();
   }
   
-  
-
   //
   addToCart(productId: number) {
     this.cartService.addToCart(productId, 1).subscribe({
@@ -197,5 +173,16 @@ export class ProductListComponent {
       }
     });
   }
+
+  addToWishlist(productId: number) {
+    console.log('Add to wishlist:', productId);
+    // Add your wishlist logic here
+  }
   
+  buyNow(productId: number) {
+    console.log('Buy now clicked for:', productId);
+    // Add your buy now logic here, maybe redirect to checkout
+  }
+  
+
 }

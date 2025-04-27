@@ -8,6 +8,9 @@ import { OrderSummaryComponent } from './orders/order-summary/order-summary.comp
 import { AuthGuard } from './shared/auth.guard';
 import { AppComponent } from './app.component';
 import { MyOrdersComponent } from './orders/my-orders/my-orders.component';
+import { roleGuard } from './shared/role.guard';
+import { ProfileComponent } from './users/profile/profile.component';
+import { ProductManageComponent } from './products/product-manage/product-manage.component';
 
 export const  routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -18,6 +21,8 @@ export const  routes: Routes = [
     { path: 'cart', component: CartListComponent },
     { path: 'orders', component: OrderSummaryComponent },
     { path: 'my-orders', component: MyOrdersComponent },
-    // { path: 'products', component: ProductListComponent, canActivate: [AuthGuard] },
-
+    { path: 'products/create', component: ProductCreateComponent, canActivate: [roleGuard] },
+    { path: 'profile', component: ProfileComponent },
+    { path: 'products/manage', component: ProductManageComponent, canActivate: [AuthGuard]}
+  
   ];

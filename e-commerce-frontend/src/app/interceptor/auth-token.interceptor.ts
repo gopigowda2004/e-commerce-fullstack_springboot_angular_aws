@@ -36,6 +36,8 @@ export const authTokenInterceptor: HttpInterceptorFn = (req, next) => {
         // Clear user data
         localStorage.removeItem('token');
         localStorage.removeItem('username');
+        localStorage.removeItem('roles');
+        localStorage.removeItem('pageSize');
 
         // Optionally show toast or alert
         // alert('Session expired. Please login again.');

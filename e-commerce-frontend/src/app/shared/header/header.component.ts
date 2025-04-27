@@ -77,6 +77,8 @@ export class HeaderComponent {
   }
 
   viewProfile() {
+    console.log('View profile clicked');
+    const stored = localStorage.getItem('roles');
     this.router.navigate(['/profile']); // Create profile component later
   }
 
@@ -88,14 +90,19 @@ export class HeaderComponent {
   orderCount() {
     this.orderService.getMyOrders().subscribe({
       next: (res: any[]) => {
-        console.log('Orders fetched:', JSON.stringify(res));
         this.orderCountValue = res.length;
-        console.log('Total orders:', this.orderCountValue);
       },
       error: (err) => {
         console.error('Failed to fetch orders:', err);
       }
     });
+  }
+
+  hasAdminOrSellerRole(): boolean {
+    const stored = localStorage.getItem('roles');
+    const roles: string[] = stored ? JSON.parse(stored) : [];
+  
+    return roles.includes('ROLE_ADMIN') || roles.includes('ROLE_SELLER');
   }
 
 }

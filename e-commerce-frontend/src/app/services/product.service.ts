@@ -41,5 +41,18 @@ export class ProductService {
     return this.http.get<any>(`http://localhost:8080/api/products/categories/${categoryId}`, { params });
   }
   
+  createProduct(categoryId: number, data: any): Observable<any> {
+    return this.http.post(`http://localhost:8080/api/products/categories/${categoryId}`, data);
+  }
+
+  getMyProducts(params: any): Observable<any[]> {
+    return this.http.get<any>(`http://localhost:8080/api/products`, { params });
+    // return this.http.post<any[]>('http://localhost:8080/api/products', param, { observe: 'body' });
+  }
+  
+  deleteProduct(productId: number) {
+    return this.http.delete(`${this.baseUrl}/products/${productId}`);
+  }  
+  
   
 }
