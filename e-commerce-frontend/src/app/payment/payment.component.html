@@ -1,0 +1,15 @@
+<!-- payment.component.html -->
+<div class="container py-5">
+    <div class="card p-4 shadow-sm">
+      <h2 class="mb-3">💳 Payment Gateway</h2>
+  
+      <p>Amount: <strong>₹{{ totalAmount }}</strong></p>
+      <p>Payment Method: <strong>{{ paymentMethod }}</strong></p>
+  
+      <div class="d-flex gap-3 mt-4">
+        <button class="btn btn-success" (click)="confirmPayment('SUCCESS')">✅ Simulate Success</button>
+        <button class="btn btn-danger" (click)="confirmPayment('FAILED')">❌ Simulate Failure</button>
+      </div>
+    </div>
+  </div>
+  

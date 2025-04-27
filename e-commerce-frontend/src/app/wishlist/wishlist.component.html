@@ -1,0 +1,64 @@
+<!-- <div *ngFor="let item of wishlistItems">
+    <div>
+      <img [src]="item.productImageUrl" width="100">
+      <p>{{ item.productName }}</p>
+      <button (click)="removeFromWishlist(item.id)">Remove</button>
+    </div>
+  </div>
+   -->
+
+   <!-- <div class="container py-5">
+    <h2 class="text-center mb-5 fw-bold">🤍 My Wishlist</h2>
+
+    <div class="row g-4">
+        <div class="col-md-4" *ngFor="let item of wishlistItems">
+            <div class="card h-100 shadow-sm border-0">
+                <img [src]="item.productImageUrl" class="card-img-top rounded-top" alt="Product Image">
+                
+                <div class="card-body">
+                    <h5 class="card-title fw-semibold">{{ item.productName }}</h5>
+                    <p class="card-text text-muted small">{{ item.productDescription }}</p>
+                    
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <h5 class="text-primary fw-bold mb-0">₹ {{ item.price }}</h5>
+                        <button class="btn btn-sm btn-outline-danger" (click)="removeFromWishlist(item.productId)">
+                            <i class="bi bi-trash3"></i> Remove
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+ -->
+
+<div class="container py-5">
+    <h2 class="text-center mb-5 fw-bold">🤍 My Wishlist</h2>
+
+    <div class="table-responsive">
+        <table class="table align-middle table-hover table-borderless">
+            <thead class="table-light">
+                <tr>
+                    <th scope="col">Product Image</th>
+                    <th scope="col">Product Name</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Remove</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of wishlistItems">
+                    <td style="width: 400px;">
+                        <img [src]="item.productImageUrl" alt="Product Image" class="img-fluid rounded" style="width: 80px; height: auto;">
+                    </td>
+                    <td class="fw-semibold">{{ item.productName }}</td>
+                    <td class="text-primary fw-bold">₹ {{ item.price }}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-danger" (click)="removeFromWishlist(item.productId)">
+                            <i class="bi bi-trash3"></i> Remove
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
