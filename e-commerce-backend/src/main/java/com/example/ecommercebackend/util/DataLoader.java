@@ -2,10 +2,7 @@ package com.example.ecommercebackend.util;
 
 import com.example.ecommercebackend.config.AppConstants;
 import com.example.ecommercebackend.model.*;
-import com.example.ecommercebackend.repository.CategoryRepository;
-import com.example.ecommercebackend.repository.ProductRepository;
-import com.example.ecommercebackend.repository.RoleRepository;
-import com.example.ecommercebackend.repository.UserRepository;
+import com.example.ecommercebackend.repository.*;
 import com.example.ecommercebackend.service.CartService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -31,9 +28,11 @@ public class DataLoader {
             PasswordEncoder passwordEncoder,
             CartService cartService,
             ProductRepository productRepository,
-            CategoryRepository categoryRepository
+            CategoryRepository categoryRepository,
+            AddressRepository addressRepository
     ) {
         return args -> {
+
             // Retrieve or create roles
             Role userRole = roleRepository.findByRoleName(AppRole.ROLE_USER)
                     .orElseGet(() -> {
@@ -57,6 +56,9 @@ public class DataLoader {
             Set<Role> sellerRoles = Set.of(sellerRole);
             Set<Role> adminRoles = Set.of(userRole, sellerRole, adminRole);
 
+            //
+            Address userAddress = new Address();
+            Address adminAddress = new Address();
 
             // Create users if not already present
             if (!userRepository.existsByUserName("user1")) {
@@ -71,12 +73,14 @@ public class DataLoader {
 
             if (!userRepository.existsByUserName("admin")) {
                 User admin = new User("admin", "admin@example.com", passwordEncoder.encode("adminPass"));
+                adminAddress.setUser(admin);
                 userRepository.save(admin);
             }
 
             // Update roles for existing users
             userRepository.findByUserName("user1").ifPresent(user -> {
                 user.setRoles(userRoles);
+                userAddress.setUser(user);
                 userRepository.save(user);
             });
 
@@ -89,6 +93,24 @@ public class DataLoader {
                 admin.setRoles(adminRoles);
                 userRepository.save(admin);
             });
+
+
+            userAddress.setStreet("Datta Mandir");
+            userAddress.setCity("Pune");
+            userAddress.setCountry("India");
+            userAddress.setPincode("412207");
+            userAddress.setState("Maharashtra");
+            userAddress.setBuildingName("Silver Crest");
+
+            adminAddress.setStreet("Malad Street");
+            adminAddress.setCity("Mumbai");
+            adminAddress.setCountry("India");
+            adminAddress.setPincode("412207");
+            adminAddress.setState("Maharashtra");
+            adminAddress.setBuildingName("Golden Crest");
+
+            addressRepository.save(userAddress);
+            addressRepository.save(adminAddress);
 
             //
             SecurityContext context = SecurityContextHolder.createEmptyContext();
