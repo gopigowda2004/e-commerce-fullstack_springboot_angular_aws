@@ -2,12 +2,12 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css']
 })
@@ -31,6 +31,9 @@ export class ProfileComponent {
     country: '',
     pincode: ''
   };
+
+  showDeleteConfirmation = false;
+  deleteAddressId: any = null;
 
   ngOnInit(): void {
     this.fetchCurrentUser();
@@ -100,6 +103,7 @@ export class ProfileComponent {
       this.http.delete(`http://localhost:8080/api/addresses/${addressId}`).subscribe({
         next: () => {
           this.fetchAddresses();
+          this.showDeleteConfirmation = false;
           alert('Address deleted ✅');
         },
         error: () => {
@@ -107,5 +111,15 @@ export class ProfileComponent {
         }
       });
     }
+  }
+
+  confirmDeleteAddress(addressId: string) {
+    this.showDeleteConfirmation = true;
+    this.deleteAddressId = addressId;
+  }
+
+  cancelDelete() {
+    this.showDeleteConfirmation = false;
+    this.deleteAddressId = null;
   }
 }

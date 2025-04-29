@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { OrderService } from '../../services/order.service';
 
 @Component({
   selector: 'app-order-place-success',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './order-place-success.component.html',
   styleUrl: './order-place-success.component.css'
 })

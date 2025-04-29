@@ -1,13 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OrderService } from '../../services/order.service';
-import { RouterLink } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-my-orders',
   standalone: true,
-  imports: [CommonModule, RouterLink, HttpClientModule],
+  imports: [CommonModule, HttpClientModule],
   templateUrl: './my-orders.component.html',
   styleUrls: ['./my-orders.component.css']
 })
