@@ -8,7 +8,7 @@ This is a full-stack e-commerce application with the following features:
 - 🛂 **Backend:** Spring Boot, Spring Data JPA, Spring Security 6, JWT authentication, REST APIs  
 - 🎨 **Frontend:** Angular, Bootstrap 5  
 - ☁ **Deployment:** AWS (S3, EC2, RDS, CloudFront)  
-- 🟢 **Database:** PostgreSQL / MySQL  
+- 🟢 **Database:** H2  
 - 🔒 **Security:** JWT authentication, role-based access control  
 - 🏢 **CI/CD:** GitHub Actions, Docker, Kubernetes  
 
@@ -17,18 +17,17 @@ This is a full-stack e-commerce application with the following features:
 ## 🏠 **Project Structure**  
 ```
 e-commerce-fullstack_springboot_angular_aws/
-│── backend/                  # Spring Boot application (REST APIs, Security, DB)
-│   ├── src/main/java/...      # Java source code
-│   ├── src/main/resources/    # Configuration files
-│   ├── pom.xml                # Maven dependencies
-│── frontend/                  # React app (UI, state management, API calls)
-│   ├── src/                   # React source code
-│   ├── public/                # Static assets
-│   ├── package.json           # Node.js dependencies
-│── README.md                  # Project documentation
-│── .gitignore                 # Ignore unnecessary files
-│── docker-compose.yml         # Docker setup (if needed)
-│── deploy/                    # Deployment scripts
+│── e-commerce-backend/                 
+│   ├── src/main/java/...      
+│   ├── src/main/resources/    
+│   ├── pom.xml                
+│── e-commerce-frontend/       
+│   ├── src/                   
+│   ├── public/                
+│   ├── package.json           
+│── README.md                  
+│── .gitignore                 
+│── docker-compose.yml         
 ```
 
 ---
@@ -44,7 +43,7 @@ cd e-commerce-fullstack_springboot_angular_aws
 ### **2️⃣ Backend Setup**  
 - **Navigate to Backend Folder:**  
   ```sh
-  cd backend
+  cd e-commerce-backend
   ```
 - **Configure Database:** Update `application.properties` or `application.yml`  
 - **Run the Application:**  
@@ -55,7 +54,7 @@ cd e-commerce-fullstack_springboot_angular_aws
 ### **3️⃣ Frontend Setup**  
 - **Navigate to Frontend Folder:**  
   ```sh
-  cd frontend
+  cd e-commerce-frontend
   ```
 - **Install Dependencies:**  
   ```sh
@@ -69,20 +68,27 @@ cd e-commerce-fullstack_springboot_angular_aws
 ---
 
 ## 💽 **API Endpoints**  
-| Method | Endpoint               | Description                 |  
-|--------|------------------------|-----------------------------|  
-| POST   | `/api/auth/signup`     | User registration           |  
-| POST   | `/api/auth/login`      | User login & JWT token      |  
-| GET    | `/api/products`        | Fetch all products         |  
-| GET    | `/api/products/{id}`   | Fetch product by ID        |  
-| POST   | `/api/orders`          | Place an order             |  
-
----
-
-## 🌍 **Deployment on AWS**  
-- **Frontend:** Deployed on S3 & CloudFront  
-- **Backend:** Running on EC2 with RDS database  
-- **Docker Support:** Containerized app using Docker & Kubernetes  
+| Method | Endpoint                     | Description                   |
+| ------ | ---------------------------- | ----------------------------- |
+| POST   | `/api/auth/signup`           | User registration             |
+| POST   | `/api/auth/login`            | User login                    |
+| POST   | `/api/products`              | Create a product              |
+| GET    | `/api/products`              | Get all products              |
+| GET    | `/api/products/{id}`         | Get product by ID             |
+| PUT    | `/api/products/{id}`         | Update product by ID          |
+| DELETE | `/api/products/{id}`         | Delete product by ID          |
+| POST   | `/api/cart`                  | Add product to cart           |
+| GET    | `/api/cart`                  | Get cart items                |
+| DELETE | `/api/cart/{productId}`      | Remove product from cart      |
+| POST   | `/api/orders`                | Place an order                |
+| GET    | `/api/orders`                | Get all orders for user       |
+| GET    | `/api/orders/{orderId}`      | Get order details             |
+| PUT    | `/api/orders/{orderId}/pay`  | Mark order as paid            |
+| PUT    | `/api/orders/{orderId}/ship` | Mark order as shipped (admin) |
+| GET    | `/api/users`                 | Get all users (admin)         |
+| GET    | `/api/users/{userId}`        | Get user details (admin)      |
+| PUT    | `/api/users/{userId}`        | Update user (admin)           |
+| DELETE | `/api/users/{userId}`        | Delete user (admin)           |
 
 ---
 
@@ -91,7 +97,7 @@ cd e-commerce-fullstack_springboot_angular_aws
 - Spring Boot  
 - Spring Data JPA  
 - Spring Security 6 & JWT  
-- PostgreSQL / MySQL  
+- H2  
 - Hibernate  
 - Maven  
 
