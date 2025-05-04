@@ -113,6 +113,35 @@ cd e-commerce-fullstack_springboot_angular_aws
 
 ---
 
+## Screenshots
+### Login 
+![alt text](login-1.png) 
+### Product List
+![alt text](products-page-1.png) 
+### Cart
+![alt text](cart.png) 
+### Checkout
+![alt text](checkout.png) 
+### My Orders
+![alt text](my-orders.png) 
+### Create and Manage Products (ADMIN)
+![alt text](admin-create-manage-products.png) 
+### Create Product (ADMIN)
+![alt text](admin-create-product.png) 
+### Manage Product (ADMIN)
+![alt text](admin-manage-product.png) 
+### Signup
+![alt text](signup.png) 
+### User Profile
+![alt text](user-profile.png) 
+### Wishlist
+![alt text](wishlist.png) 
+### User Options
+![alt text](<wishlist and profile.png>) 
+### Search
+![alt text](search.png)
+---
+
 ## 🤝 **Contributing**  
 Feel free to fork this repo, raise issues, and submit pull requests! 🎉  
 
