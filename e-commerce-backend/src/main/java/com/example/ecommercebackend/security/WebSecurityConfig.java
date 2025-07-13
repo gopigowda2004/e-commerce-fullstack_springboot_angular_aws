@@ -24,11 +24,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
-
 @Configuration
 @EnableWebSecurity
-//@EnableMethodSecurity
 public class WebSecurityConfig {
+
     @Autowired
     UserDetailsServiceImpl userDetailsService;
 
@@ -40,17 +39,13 @@ public class WebSecurityConfig {
         return new AuthTokenFilter();
     }
 
-
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-
         authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
-
         return authProvider;
     }
-
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
@@ -62,30 +57,25 @@ public class WebSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors(Customizer.withDefaults())
-                .csrf(csrf -> csrf.disable())
-                .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth ->
-                                auth
-                                        .requestMatchers("/h2-console/**").permitAll()
-//                                .requestMatchers("/api/h2-console/**").permitAll()
-//                                .requestMatchers("/api/auth/**").permitAll()
-                                        .requestMatchers("/auth/**").permitAll()
-                                        .requestMatchers("/v3/api-docs/**").permitAll()
-                                        .requestMatchers("/swagger-ui/**").permitAll()
-                                        .requestMatchers("/images/**").permitAll()
-                                        .anyRequest().authenticated()
-                );
-        http.headers(headers ->
-                headers.
-                        frameOptions(frameOptionsConfig ->
-                                frameOptionsConfig.sameOrigin())
-        );
+            .cors(Customizer.withDefaults())
+            .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**")) // ✅ allow CSRF only for H2 console
+            .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/h2-console/**").permitAll()          // ✅ allow H2 console
+                .requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/v3/api-docs/**").permitAll()
+                .requestMatchers("/swagger-ui/**").permitAll()
+                .requestMatchers("/images/**").permitAll()
+                .anyRequest().authenticated()
+            )
+            .headers(headers -> headers
+                .frameOptions(frameOptions -> frameOptions.sameOrigin()) // ✅ required for H2 iframe
+            );
+
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
@@ -93,22 +83,24 @@ public class WebSecurityConfig {
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web -> web.ignoring().requestMatchers("/v2/api-docs",
+        return (web -> web.ignoring().requestMatchers(
+                "/v2/api-docs",
                 "/configuration/ui",
                 "/swagger-resources/**",
                 "/configuration/security",
                 "/swagger-ui.html",
-                "/webjars/**"));
+                "/webjars/**"
+        ));
     }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:4200")); // use "*" only if credentials=false
+        config.setAllowedOrigins(List.of("http://localhost:4200"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
-        config.setAllowCredentials(true); // for Authorization headers
-        config.setExposedHeaders(List.of("Authorization")); // optional
+        config.setAllowCredentials(true);
+        config.setExposedHeaders(List.of("Authorization"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
